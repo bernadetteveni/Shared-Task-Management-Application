@@ -1,0 +1,102 @@
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="css/styles.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script type="text/javascript" src="js/Todo.js"></script>  
+    </head>
+    <body>
+        <div class="dropdown">
+            <button class="dropbtn" onclick="myFunction()">Logged in as <%=username%>
+            <i class="fa fa-caret-down"></i>
+            </button>
+            <div class="dropdown-content" id="myDropdown">
+                <form method="get", action="/logout">
+                    <input type="submit" value="Logout">
+                </form> 
+            </div>
+        </div> 
+        <div class="divider">
+            </br>
+        </div>
+        <div class="flex-container center">
+            <h2><%=title%></h2>
+            <form method = "POST" action = "/purge">
+                <input hidden name="usernameId" value="<%=username%>"/>
+                <input type="submit" value="Remove Completed" id="removeButton" class="removeButton"/>
+            </form>
+            <input hidden name="largestTaskId" value="<%=largestTaskId%>"/>
+            <input hidden name="usernameId" value="<%=username%>"/>
+            <% for (var item of listOfTasks) {%> 
+        
+                <% if (item.owner == null && !item.done && !item.cleared){ %>
+                <form class="form" method = "POST" action = "/claim">
+                    <div class="active">
+                        <input hidden name="usernameId" value="<%=username%>"/>
+                        <input hidden name="id" value="<%=item._id%>"/>
+                        <span><%=item.name%></span>
+                        <input type="submit" value="Claim" class="right"/>
+                    </div>  
+                </form>    
+                <% } %>
+                <% if(item.owner != null) {if (item.owner.username != username && item.owner.username != null && !item.done && !item.cleared){ %>
+                    <form class="form">
+                        <div class="active">
+                            <input hidden name="id" value="<%=item._id%>"/>
+                            <span><%=item.name%></span>
+                        </div> 
+                    </form>
+                <% }} %>
+                <% if(item.owner != null) {if (item.owner.username != username && item.owner.username != null && item.done && !item.cleared){ %>
+                    <div class="done">
+                        <input hidden name="id" value="<%=item._id%>"/>
+                        <span><%=item.name%></span>
+                    </div>          
+                <% }} %>
+                
+                <% if(item.owner != null) {if (item.owner.username == username && item.done && !item.cleared){ %>
+                    <form class="form" id="unfinishForm" method = "POST" action = "/unfinish">
+                        <div class="done">
+                            <input hidden name="id" value="<%=item._id%>"/>
+                            <input class="checkbox" onchange="document.getElementById('unfinishForm').submit()" type="checkbox" checked></input>
+                            <span><%=item.name%></span>
+                            <input hidden type="submit"/>
+                        </div>
+                    </form>
+                <% }} %>
+                <% if(item.owner != null) {if (item.owner.username == username && !item.done && !item.cleared){ %>
+                    <form class="form" id="finishedForm" method = "POST" action = "/abandonorcomplete">
+                        <div class="active">
+                            <input hidden name="id" value="<%=item._id%>"/>
+                            <input hidden name="username" value="<%=username%>"/>
+                            <input name="checkbox" class="checkbox" type="checkbox" onchange="document.getElementById('finishedForm').submit()"></input>
+                            <span><%=item.name%></span>
+                            <input name="abandon" type="submit" value="Abandon" class="right"/>
+                        </div>
+                    </form>
+                <% }} %>
+            <% } %>
+
+            <form method = "POST" action = "/addTask">
+                <input hidden name="largestTaskId" value="<%=largestTaskId%>"/>
+                <input hidden name="usernameId" value="<%=username%>"/>
+                <div id="newTask" class="active"> 
+                    <input id="taskInput" name="taskInput" type="text" placeholder="Enter a new task here">
+                    <input type="submit" value="Add" id="addButton" class="right"/>
+                </div>
+            </form>
+        </div>
+        <script>
+            function myFunction() {
+              document.getElementById("myDropdown").classList.toggle("show");
+            }            
+            window.onclick = function(e) {
+              if (!e.target.matches('.dropbtn')) {
+              var myDropdown = document.getElementById("myDropdown");
+                if (myDropdown.classList.contains('show')) {
+                  myDropdown.classList.remove('show');
+                }
+              }
+            }
+        </script>
+    </body>
+</html>
