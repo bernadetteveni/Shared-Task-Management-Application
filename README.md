@@ -1,4 +1,4 @@
-# Shared Task Management Software
+# Shared Task Management Application
 
 ## Objective 
 The purpose of this program is to introduce the model component of the Node stack Model-View-Controller implementation. In particular the MongoDB and Mongoose packages to implement the database of the task management application. Additionally, using Passport to add secure authentication to the application.
